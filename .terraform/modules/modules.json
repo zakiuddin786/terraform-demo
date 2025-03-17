@@ -1,1 +1,1 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"BackendServer","Source":"./modules/ec2","Dir":"modules/ec2"},{"Key":"WebServer","Source":"./modules/ec2","Dir":"modules/ec2"}]}
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"BackendServer","Source":"./modules/ec2","Dir":"modules/ec2"},{"Key":"WebServer","Source":"./modules/ec2","Dir":"modules/ec2"},{"Key":"webserver_cpu_alarm","Source":"./modules/cloudwatch","Dir":"modules/cloudwatch"}]}

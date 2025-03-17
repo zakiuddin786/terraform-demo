@@ -1,30 +1,11 @@
-
-
-variable "ami_id" {
-    type = string
-    default = "ami-05c179eced2eb9b5b"
-    description = "This is the AMI id of AL2 in ap-south-1 region"
+variable "instance_config" {
+    type = object({
+      ami_id = string,
+      instance_type = string,
+      instance_count = number,
+      instance_name = string
+    })
 }
-
-variable "instance_type" {
-    type = string
-    default = "t2.micro"
-    description = "This is type of ec2 instance to launch"
-}
-
-variable "instance_count" {
-    type = number
-    default = 3
-    description = "Number of instances"
-}
-
-variable "instance_name" {
-    type = string
-    default = "Terraform-created"
-    description = "Name of my instances"
-}
-
-
 variable "security_group_name" {
     type = string
     default = "Terraform-created-group"

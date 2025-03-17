@@ -1,30 +1,11 @@
 resource "aws_instance" "terraform-ec2" {
-    # ami = "ami-05c179eced2eb9b5b"
-    ami = var.ami_id
-    # instance_type = "t2.micro"
-    instance_type = var.instance_type
-    # count = 2
-    count = var.instance_count
+    ami = var.instance_config.ami_id
+    instance_type = var.instance_config.instance_type
+    count = var.instance_config.instance_count
     key_name = "zaki-test"
     tags = {
-        Name = var.instance_name
+        Name = var.instance_config.instance_name
     }
-
-    # connection {
-    #   type = "ssh"
-    #   user = "ec2-user"
-    #   private_key = file("/Users/zakimd/Desktop/devops/zaki-key.pem")
-    #   host = self.public_ip
-    # }
-
-    # provisioner "remote-exec" {
-    #   inline = [ 
-    #     "sudo yum update -y",
-    #     "sudo yum install nginx",
-    #     "sudo systemctl start nginx",
-    #     "sudo systemctl enable nginx",
-    #    ]
-    # }
 }
 
 resource "aws_security_group" "sg_example" {
@@ -39,9 +20,7 @@ resource "aws_security_group" "sg_example" {
             protocol         = "tcp"
             cidr_blocks      = ["0.0.0.0/0"]
         }
-    # ipv6_cidr_blocks = ["::/0"]
   }
-
   egress {
     from_port        = 0
     to_port          = 0
@@ -49,7 +28,6 @@ resource "aws_security_group" "sg_example" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-
   tags = {
     Name        = "Allowing the traffic via terraform config"
   }
