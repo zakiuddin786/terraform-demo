@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_metric_alarm" "cloudwatch_alarm" {
-  alarm_name = var.alarm_config.alarm_name
+    alarm_name = var.alarm_config.alarm_name
     comparison_operator = var.alarm_config.comparison_operator
     evaluation_periods = var.alarm_config.evaluation_periods
     metric_name = var.alarm_config.metric_name

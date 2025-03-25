@@ -3,6 +3,21 @@ provider "aws" {
     region = var.aws_region
 }   
 
+module "TerraformVPC" {
+  source = "./modules/vpc"
+  vpc_config = {
+    cidr_block = "10.0.0.0/16"
+    instance_tenancy = "default"
+    enable_dns_hostnames = true
+  }
+
+  subnet_config = {
+    cidr_block = "10.0.1.0/24"
+    availability_zone = "ap-south-1a"
+    map_public_ip_on_launch = true
+  }
+
+}
 module "WebServer" {
   source = "./modules/ec2"
   instance_config = {
@@ -11,7 +26,11 @@ module "WebServer" {
     instance_type = var.instance_config.instance_type
     instance_name = "Webserver-${var.instance_config.instance_name}"
   }
-    security_group_name = "Modified security group for webserver"
+  security_group_name = "Modified security group for webserver"
+  vpc_config = {
+    vpc_id = module.TerraformVPC.vpc_id
+    subnet_id = module.TerraformVPC.subnet_id
+  }
 }
 module "BackendServer" {
   source = "./modules/ec2"
@@ -22,6 +41,10 @@ module "BackendServer" {
     instance_name = "Backend-${var.instance_config.instance_name}"
   }
   security_group_name = "Modified security group for backend"
+    vpc_config = {
+    vpc_id = module.TerraformVPC.vpc_id
+    subnet_id = module.TerraformVPC.subnet_id
+  }
 }
 
 resource "aws_sns_topic" "alarms" {
@@ -30,9 +53,9 @@ resource "aws_sns_topic" "alarms" {
 
 module "webserver_cpu_alarm" {
   source = "./modules/cloudwatch"
-  count = var.environment == "prod" ? var.instance_config.instance_count : 0
+  count = var.instance_config.instance_count
   alarm_config = {
-    alarm_name = "${terraform.workspace}-webserver-high-cpu-${count.index +1}"
+    alarm_name = "${terraform.workspace}-webserver-high-cpu-"
     comparison_operator = "GreaterThanThreshold"
     evaluation_periods = 5
     metric_name = "CPUUtilization"
@@ -41,7 +64,8 @@ module "webserver_cpu_alarm" {
     statistic = "Average"
     threshold = 5,
     alarm_description = "This is a test monitor created for prod resources"
-    alarm_actions = [ "arn:aws:sns:us-east-1:905418317311:Default_CloudWatch_Alarms_Topic" ]
+    alarm_actions = [aws_sns_topic.alarms.arn]
+    # alarm_actions = aws[ "arn:aws:sns:us-east-1:905418317311:Default_CloudWatch_Alarms_Topic" ]
     dimensions = {
       InstanceId = module.WebServer.instance_id[count.index]
     }

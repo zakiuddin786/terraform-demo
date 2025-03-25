@@ -6,6 +6,13 @@ variable "instance_config" {
       instance_name = string
     })
 }
+
+variable "vpc_config" {
+    type = object({
+      vpc_id = string
+      subnet_id = string 
+    })
+}
 variable "security_group_name" {
     type = string
     default = "Terraform-created-group"
